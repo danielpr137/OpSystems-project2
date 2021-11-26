@@ -7,8 +7,7 @@
 int main(int argc, char* argv[]) {
 
 	int factors[MAX_SIZE];
-	int num = atoi(argv[1]), f_size = 1;
-	int sq_of_num = (int)sqrt(num);
+	int num = atoi(argv[1]), f_size = 0;
 
 	for (int i = 1; i <= num; i++) {
 		if (num%i == 0){		 //check if the quotient is a whole number
