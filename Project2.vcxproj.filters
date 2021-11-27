@@ -18,7 +18,7 @@
     <ClCompile Include="factors.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="q1_ex2.c">
+    <ClCompile Include="ex2_q1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
