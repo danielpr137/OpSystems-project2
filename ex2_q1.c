@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
 		int rc = fork();	
 		if (rc == 0) { //is the cild proccess
 			exec_factors(argv[i]);
+			exit(2); //exit exec() failed
 		}
 	}
 	while (wait(&status) != -1) {	//wait for the child proccesses to finish
@@ -86,7 +87,7 @@ int exec_factors(char* num) {
 	char* args[3] = { "./factors",num,NULL };
 	int err = execvp(args[0], args);	//if factors exit with an error code, return it.
 
-	fprintf(stderr, "ERROR: failed to run exec() with args: '%s' '%s', err = %d",args[0], args[1], err);
+	fprintf(stderr, "ERROR: failed to run exec() with args: '%s' '%s', err = %d\n",args[0], args[1], err);
 	close(1); //free the use for stdout.
 	return err;
 }
