@@ -8,15 +8,27 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+//funciton wrapper to open() that handles errors.
+//returns integer file-descriptor
 int open_file(char* file_name);
+
+//function that recieves a prefix and a suffix null-terminated strings & concatanates them
+//return a newlly allocatd string(prefix+suffix)
 char* format_file_name(char* f_name, char* suffix);
+
+//a wrapper for exec() to execute 'factors' prog in the same file.
+//recieves a positive integer as a null terminated string.
+//like exec(), if succefull it does't return.
+//if failed, return -1
 int exec_factors(char* num);
+
+//print end message as described in project manual
 void print_end_msg(const int num_primes);
 
 int main(int argc, char* argv[])
 {
 	int primes = 0;
-	int pid, status;
+	int status;
 
 	for (int i = 1; i < argc; i++) {
 		int rc = fork();	
@@ -24,15 +36,15 @@ int main(int argc, char* argv[])
 			exec_factors(argv[i]);
 		}
 	}
-	while ((pid = wait(&status)) != -1) {
+	while (wait(&status) != -1) {	//wait for the child proccesses to finish
+
 		int ex_code = WEXITSTATUS(status);
-		fprintf(stderr, "DEBUG: pid = %d, status = %d, EX(pid) = %d, EX(status) = %d\n", 
-			pid, status, WEXITSTATUS(pid),ex_code);
+		//fprintf(stderr, "DEBUG: pid = %d, status = %d, EX(pid) = %d, EX(status) = %d\n", 
+		//	pid, status, WEXITSTATUS(pid),ex_code);
+
 		if (ex_code == 1)
 			primes++;
 	};
-		//char* args[3] = { "factors","100",NULL };
-		//execvp(args[0], args);
 	print_end_msg(primes);
 
 }
