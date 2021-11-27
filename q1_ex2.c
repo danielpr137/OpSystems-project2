@@ -8,24 +8,51 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+//funciton wrapper to open() that handles errors.
+//returns integer file-descriptor
 int open_file(char* file_name);
+
+//function that recieves a prefix and a suffix null-terminated strings & concatanates them
+//return a newlly allocatd string(prefix+suffix)
 char* format_file_name(char* f_name, char* suffix);
+
+//a wrapper for exec() to execute 'factors' prog in the same file.
+//recieves a positive integer as a null terminated string.
+//like exec(), if succefull it does't return.
+//if failed, return -1
 int exec_factors(char* num);
+
+//print end message as described in project manual
+void print_end_msg(const int num_primes);
 
 int main(int argc, char* argv[])
 {
-	int rc = fork();
-	if (rc == 0) { //is the cild proccess
-		//char* args[3] = { "factors","100",NULL };
-		//execvp(args[0], args);
-		int err = exec_factors(argv[1]);
-	}
-	else {
-		while (wait(NULL) != -1) {};
+	int primes = 0;
+	int status;
 
+	for (int i = 1; i < argc; i++) {
+		int rc = fork();	
+		if (rc == 0) { //is the cild proccess
+			exec_factors(argv[i]);
+		}
 	}
+	while (wait(&status) != -1) {	//wait for the child proccesses to finish
+
+		int ex_code = WEXITSTATUS(status);
+		//fprintf(stderr, "DEBUG: pid = %d, status = %d, EX(pid) = %d, EX(status) = %d\n", 
+		//	pid, status, WEXITSTATUS(pid),ex_code);
+
+		if (ex_code == 1)
+			primes++;
+	};
+	print_end_msg(primes);
 
 }
+
+void print_end_msg(const int num_primes) {
+	printf("There were %d prime numbers\n", num_primes);
+}
+
 
 int open_file(char* file_name) {
 	int fd = open(file_name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -58,6 +85,8 @@ int exec_factors(char* num) {
 	//via the linking we did earlier
 	char* args[3] = { "./factors",num,NULL };
 	int err = execvp(args[0], args);	//if factors exit with an error code, return it.
+
+	fprintf(stderr, "ERROR: failed to run exec() with args: '%s' '%s', err = %d",args[0], args[1], err);
 	close(1); //free the use for stdout.
 	return err;
 }
