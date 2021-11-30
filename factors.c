@@ -6,10 +6,12 @@
 
 int main(int argc, char* argv[]) {
 
-	int factors[MAX_SIZE];
-	int num = atoi(argv[1]), f_size = 0;
+	unsigned long factors[MAX_SIZE];
+	char* ptr;
+	unsigned long num = strtoul(argv[1], &ptr, 10);
+	int f_size = 0;
 
-	for (int i = 1; i <= num; i++) {
+	for (unsigned long i = 1; i <= num; i++) {
 		if (num%i == 0){		 //check if the quotient is a whole number
 			factors[f_size] = i;
 			f_size++;
@@ -17,7 +19,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	for (int i = 0; i < f_size; i++) {
-		printf("%d ", factors[i]);
+		printf("%lu ", factors[i]);
 	}
 	printf("\n");
 
